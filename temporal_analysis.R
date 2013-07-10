@@ -1,12 +1,13 @@
 library(ggplot2)
 source("./tools.r")
 
-data <- read.csv("/Users/maisonne/Documents/work/data/detections/temporal_table.csv")
+setwd("~/work/temporal_analysis/data/")
 
+#load data
+data <- read.csv("temporal_table_only_available_clusters.csv")
 
-# transforming data
+# transform time period into readable factors
 data$period_f = factor(data$period, levels = c(1,2,3,5,6,7,8,9,10,11,99), labels = time_period_labels)
-#[ranked_clusters$id<7000,]
 
 # filtering data inside cluster (taking only the top n% elements for each cluster)
 threshold = 0.5
@@ -63,13 +64,9 @@ sapply(unique(data.selected$detector_id), FUN=function(x){
   return(0)
   })
 
-save_histogram(2755,"./histograms/")
 
 
-plot_overview <- function(data){
-  plot = ggplot(data = data) + geom_histogram(aes(x=period_f))  + theme_bw()+ facet_wrap(~ ranking, ncol=10)  + ylab("Frequency")+ xlab("Period of time")   + opts(aspect.ratio=1) + theme(axis.text.x  = element_text(angle=90, vjust=0.5)) +  coord_flip()  
-  return(plot)
-}
+
 
 
 #plot2 <- ggplot(data= data.selected) + geom_histogram(aes(x=period_f)) +  scale_x_discrete(breaks=NULL)+ scale_y_discrete(breaks=NULL) + theme_bw()+ facet_grid(~ ranking, ncol=10, labeller= mf_labeller)  + ylab("Frequency")+ xlab("Period of time")   + opts(aspect.ratio=1)  +  coord_flip()

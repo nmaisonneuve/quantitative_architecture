@@ -15,7 +15,6 @@ histogram<-function (data){
   # mapping labels with their associated nb of occurences for each period of time
   count <- vapply(time_period_labels, 1, 
                   FUN = function(y) { 
-                      print(y)
                         count = length(which(data$period_f == y)) 
                         return(count)
                       },USE.NAMES = FALSE)
@@ -63,27 +62,34 @@ filter_clusters_by_entropy <- function (data, top_n = 10){
   # Choosing the top n clusters/detector_id ranked by entropy 
   ranked_clusters = cluster.entropy[order(-cluster.entropy$entropy),]
   top_clusters = ranked_clusters[1:top_n,]
-return (top_clusters$id)
+return (top_clusters)
 }
 
 #create the histogram for a given cluster
-save_histogram <-function (data, dest_dir){
-  filename = paste(dest_dir,cluster_id,"_legended.png",sep="")
-  plot2 <- ggplot(data=d) + geom_histogram(aes(x=period_f)) + opts(aspect.ratio=1)  #+  coord_flip()
+save_histogram <-function (data, filename, dest_dir){
+  filename = paste(dest_dir,filename,".png",sep="")
+
+  plot2 <- ggplot(data = data) + geom_bar(aes(x=period, y=dens), stat="identity") + opts(aspect.ratio=1)
+  # plot2 <- ggplot(data=d) + geom_histogram(aes(x=period_f)) + opts(aspect.ratio=1)  #+  coord_flip()
   # plot2 <-  plot2 +  ylab("Frequency")+  xlab("Period of time") 
   plot2 <- plot2 + theme(
-    axis.text.x  = element_text(angle=90, vjust=0.5) 
+    #axis.text.x  = element_text(angle=90, vjust=0.5) 
     #panel.grid.minor = element_blank(),
     #panel.grid.major = element_blank(),
-    #panel.border = element_blank()
-    #   axis.text.x=element_blank(),
-    # axis.text.y=element_blank(),
-    #  axis.ticks=element_blank(),
-    #  axis.title.x=element_blank(),
-    # axis.title.y=element_blank()
+    panel.border = element_blank(),
+       axis.text.x=element_blank(),
+     axis.text.y=element_blank(),
+      axis.ticks=element_blank(),
+      axis.title.x=element_blank(),
+     axis.title.y=element_blank()
   )
   # panel.background=theme_blank(),panel.border=theme_blank(),panel.grid.major=theme_blank(),
   # panel.grid.minor=theme_blank(),plot.background=theme_blank()
   ggsave(plot2,file=filename, width = 5, height = 5, dpi=50)
   return(plot2)
+}
+
+plot_overview <- function(data){
+  plot = ggplot(data = data) + geom_histogram(aes(x=period_f))  + theme_bw()+ facet_wrap(~ ranking, ncol=10)  + ylab("Frequency")+ xlab("Period of time")   + opts(aspect.ratio=1) + theme(axis.text.x  = element_text(angle=90, vjust=0.5)) +  coord_flip()  
+  return(plot)
 }
