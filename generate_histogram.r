@@ -36,7 +36,7 @@ clusters = clusters[order(-clusters$entropy),]
 top_n = 400
 top_n = min(nrow(clusters), top_n)
 
-top_clusters = clusters[1:top,]
+top_clusters = clusters[1:top_n,]
 cluster_list = top_clusters$cluster_id
 
 # or defining a list of specific clusters
