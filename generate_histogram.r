@@ -6,8 +6,8 @@ source("./tools.r")
 data <- read.csv("data/temporal_table_only_available_clusters.csv")
 
 ######## pre-processing ########
-
 names(data)[2] = c("cluster_id")
+
 # transform time period into readable factors
 data$period_f = factor(data$period, levels = c(1,2,3,5,6,7,8,9,10,11,99), labels = time_period_labels)
 
@@ -66,8 +66,8 @@ for (cluster_id in cluster_list) {
 # generate json about cluster infos and related patches infos 
 cluster_images <- lapply(cluster_list, FUN=function(cluster_id){
   images_filenames = data.filtered[data.filtered$cluster_id == cluster_id,]$filename
-  cluster = clusters[clusters$id==cluster_id,]
-  return (list(id=cluster_id, images = images_filename, entropy=cluster$entropy, dominance=cluster$dominance))
+  cluster = clusters[clusters$cluster_id==cluster_id,]
+  return (list(id=cluster_id, images = images_filenames, entropy=cluster$entropy, dominance=cluster$dominance))
 })
 sink(paste(base_dir, "clusters.json",sep=""))
 cat(toJSON(cluster_images))
