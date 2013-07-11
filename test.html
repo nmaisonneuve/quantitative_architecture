@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="http://twitter.github.io/bootstrap/assets/css/docs.css" rel="stylesheet">
+    <link href="http://twitter.github.io/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://documentcloud.github.io/underscore/underscore-min.js"></script>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+    <style type="text/css">
+.spacer {
+    margin-top: 10px; /* define margin as you see fit */
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+    <div id="target">
+    </div>
+    </div>
+    <script  type="text/template"  id='list_images'>
+    <div  class="row-fluid spacer">
+    <div class="span3">
+    <h2><%= cluster.id %></h2>
+      <img src='./results/20/histograms/<%= cluster.id %>.png' width='250' />
+    </div>
+    <div class="span9">
+    <% $.each(cluster.images, function(idx,image){ %>
+      <img src='<%= image %>.jpg' width='100' height='100'/>
+    <% }) %>
+    </div>
+    </div>
+    </script>
+
+    <script type="text/javascript">
+
+    $(function() {
+      clusters = {};
+      var template = $("#list_images").html();
+      console.log(template);
+      $.getJSON("./results/20/clusters.json", function(data){
+          clusters = data;
+          $.each(clusters,function(idx, cluster){
+            var d = _.template(template,{cluster:cluster});
+            $("#target").append(d);
+          });
+      });
+    });
+    </script>
+    
+
+
+
+  </body>
+  </html>

@@ -10,7 +10,7 @@ time_period = factor(time_period_labels, levels = time_period_labels)
 # i.e. compared a basic aggregation function:
 # ddply(x,.(period_f), summarize, freq=length(period_f)), 
 # this one takes each time period and compute its frequency *even if the period is not existing in the data*
-histogram<-function (data){
+period_hist<-function (data){
   
   # mapping labels with their associated nb of occurences for each period of time
   count <- vapply(time_period_labels, 1, 
@@ -40,28 +40,30 @@ score_filtering <- function (data, threshold){
 }
 
 
-# Compute entropy of the time period  histogram
-entropy <- function(data){
-  
-  # compute histogram
-  hist = histogram(data)
+# Compute entropy of a time period  histogram
+compute_entropy <- function(dens){
   
   # adding 0.0001 to the normalized histogram to prevent log(0)
-  pi = hist$density + 0.000001 
-  
+  #pi = hist$dens + 0.000001 
+  pi = dens + 0.000001
   entropy = - sum(pi * log(pi)) 
   return (entropy)
 }
 
+
 # Choosing the top n clusters/detector_id ranked by entropy 
 filter_clusters_by_entropy <- function (data, top_n = 10){
+  
   # Computing the entropy of the histogram for each cluster
-  cluster.entropy = ddply(data,.(detector_id), .fun=entropy) 
+  cluster.entropy = ddply(data,.(detector_id), .fun=entropy)
   names(cluster.entropy)= c("id", "entropy")
   
   # Choosing the top n clusters/detector_id ranked by entropy 
   ranked_clusters = cluster.entropy[order(-cluster.entropy$entropy),]
-  top_clusters = ranked_clusters[1:top_n,]
+  
+  top = min(nrow(ranked_clusters), top_n)
+  
+  top_clusters = ranked_clusters[1:top,]
 return (top_clusters)
 }
 
